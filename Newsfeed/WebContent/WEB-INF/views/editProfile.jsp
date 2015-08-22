@@ -59,8 +59,7 @@
 					<form:input type="file" path="avatarFile" class="form-control" />
 				</div>
 			</div>
-			<a href="${pageContext.request.contextPath }/"
-				class="btn btn-default">Cancel</a>
+			<a href="${pageContext.request.contextPath }/" class="btn btn-default"><spring:message code="label.cancel" /></a>
 			<button type="submit" class="btn btn-primary pull-right">
 				<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
 				<spring:message code="label.save.profile" />
