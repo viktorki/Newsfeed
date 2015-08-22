@@ -1,0 +1,33 @@
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth"
+	xsi:schemaLocation="http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/security/oauth
+		http://www.springframework.org/schema/security/spring-security-oauth.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	<global-method-security pre-post-annotations="enabled" />
+	<http use-expressions="true" access-denied-page="/403"
+		disable-url-rewriting="true">
+		<session-management invalid-session-url="/login">
+			<concurrency-control max-sessions="1"
+				expired-url="/login" />
+		</session-management>
+		<form-login login-page="/login" login-processing-url="/login.do"
+			default-target-url="/" authentication-failure-url="/loginFailed"
+			username-parameter="username" password-parameter="password" />
+		<logout logout-url="/logout" logout-success-url="/login"
+			delete-cookies="JSESSIONID" invalidate-session="true" />
+		<intercept-url pattern="/login" access="permitAll()" />
+		<intercept-url pattern="/loginFailed" access="permitAll()" />
+		<intercept-url pattern="/profile/new" access="permitAll()" />
+		<intercept-url pattern="/css/**" access="permitAll()" />
+		<intercept-url pattern="/fonts/**" access="permitAll()" />
+		<intercept-url pattern="/js/**" access="permitAll()" />
+		<intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+	</http>
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="userService" />
+	</authentication-manager>
+</b:beans>

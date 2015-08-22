@@ -1,0 +1,63 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<context:component-scan base-package="newsfeed" />
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/views/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="5000000" />
+	</bean>
+	<bean id="mongo" scope="singleton" class="com.mongodb.MongoClient">
+		<constructor-arg index="0">
+			<bean id="repOne" class="com.mongodb.ServerAddress">
+				<constructor-arg index="0" type="java.lang.String" value="127.0.0.1:27017" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	<bean id="morphia" scope="singleton" class="org.mongodb.morphia.Morphia" />
+	<bean id="datastore" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="morphia" />
+		<property name="targetMethod" value="createDatastore" />
+		<property name="arguments">
+			<list>
+				<ref bean="mongo" />
+				<value>newsfeed</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="messageSource"
+    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename" value="/WEB-INF/messages/messages" />
+    <property name="defaultEncoding" value="UTF-8"/>
+</bean>
+<bean id="localeChangeInterceptor"
+    class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+    <property name="paramName" value="lang" />
+</bean>
+<bean id="localeResolver"
+    class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+    <property name="defaultLocale" value="bg_BG"/>
+</bean>
+<bean id="handlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+    <property name="interceptors">
+        <ref bean="localeChangeInterceptor" />
+    </property>
+</bean>
+	<mvc:default-servlet-handler />
+	<mvc:annotation-driven />
+</beans>
